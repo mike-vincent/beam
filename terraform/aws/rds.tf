@@ -9,23 +9,21 @@ resource "aws_vpc" "rds_vpc" {
   }
 }
 
-# Create a single public subnet
-resource "aws_subnet" "rds_public" {
-  vpc_id                  = aws_vpc.rds_vpc.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = "${var.AWS_DEFAULT_REGION}a"
-  map_public_ip_on_launch = true
+# Create two private subnets for RDS in different AZs
+resource "aws_subnet" "rds_private_1" {
+  vpc_id            = aws_vpc.rds_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "${var.AWS_DEFAULT_REGION}a"
 
   tags = {
     Owner = var.PROJECT_AUTHOR
   }
 }
 
-# Create a single private subnet for RDS
-resource "aws_subnet" "rds_private" {
+resource "aws_subnet" "rds_private_2" {
   vpc_id            = aws_vpc.rds_vpc.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "${var.AWS_DEFAULT_REGION}a"
+  availability_zone = "${var.AWS_DEFAULT_REGION}b"
 
   tags = {
     Owner = var.PROJECT_AUTHOR
@@ -55,16 +53,10 @@ resource "aws_route_table" "rds_public" {
   }
 }
 
-# Associate public subnet with public route table
-resource "aws_route_table_association" "rds_public" {
-  subnet_id      = aws_subnet.rds_public.id
-  route_table_id = aws_route_table.rds_public.id
-}
-
 # Create DB subnet group
 resource "aws_db_subnet_group" "rds" {
   name       = "${var.PROJECT_NAME}-rds-subnet-group"
-  subnet_ids = [aws_subnet.rds_private.id]
+  subnet_ids = [aws_subnet.rds_private_1.id, aws_subnet.rds_private_2.id]
 
   tags = {
     Owner = var.PROJECT_AUTHOR
