@@ -1,6 +1,6 @@
 # Create a new VPC
 resource "aws_vpc" "rds_vpc" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = "10.1.0.0/16"  # Changed from 10.0.0.0/16
   enable_dns_hostnames = true
   enable_dns_support   = true
 
@@ -12,7 +12,7 @@ resource "aws_vpc" "rds_vpc" {
 # Create two private subnets for RDS in different AZs
 resource "aws_subnet" "rds_private_1" {
   vpc_id            = aws_vpc.rds_vpc.id
-  cidr_block        = "10.0.3.0/24"
+  cidr_block        = "10.1.1.0/24"  # Changed from 10.0.3.0/24
   availability_zone = "${var.AWS_DEFAULT_REGION}a"
 
   tags = {
@@ -22,7 +22,7 @@ resource "aws_subnet" "rds_private_1" {
 
 resource "aws_subnet" "rds_private_2" {
   vpc_id            = aws_vpc.rds_vpc.id
-  cidr_block        = "10.0.4.0/24"
+  cidr_block        = "10.1.2.0/24"  # Changed from 10.0.4.0/24
   availability_zone = "${var.AWS_DEFAULT_REGION}b"
 
   tags = {
