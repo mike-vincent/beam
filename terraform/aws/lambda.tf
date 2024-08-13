@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.AWS_DEFAULT_REGION
-}
-
 resource "aws_iam_role" "lambda_role" {
   name = "${var.PROJECT_NAME}-lambda-role"
   assume_role_policy = jsonencode({
